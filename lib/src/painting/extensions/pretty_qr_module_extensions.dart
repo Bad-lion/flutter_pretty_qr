@@ -10,6 +10,7 @@ extension PrettyQrModuleExtension on PrettyQrModule {
   Rect resolveRect(PrettyQrPaintingContext context) {
     final canvasSize = context.estimatedBounds.longestSide;
     final pointSize = canvasSize / context.matrix.dimension;
-    return Rect.fromLTWH(pointSize * x, pointSize * y, pointSize, pointSize);
+    return Rect.fromLTWH(
+        pointSize * x + 1, pointSize * y + 1, pointSize - 1, pointSize - 1);
   }
 }

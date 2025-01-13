@@ -1,5 +1,5 @@
+import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
-import 'package:flutter/painting.dart';
 
 import 'package:pretty_qr_code/src/painting/pretty_qr_brush.dart';
 import 'package:pretty_qr_code/src/painting/pretty_qr_shape.dart';
@@ -32,10 +32,20 @@ class PrettyQrRoundedSymbol extends PrettyQrShape {
 
   @override
   void paint(PrettyQrPaintingContext context) {
-    final path = Path();
-    final brush = PrettyQrBrush.from(color);
+    final pointPath = Path();
+    final closeSquerePath = Path();
+    final squarePath = Path();
+    final squareWhitePath = Path();
+    final innerSquarePath = Path();
 
-    final paint = brush.toPaint(
+    final pointBrush = PrettyQrBrush.from(color);
+    final closeSquareBrush = PrettyQrBrush.from(Colors.white);
+
+    final pointPaint = pointBrush.toPaint(
+      context.estimatedBounds,
+      textDirection: context.textDirection,
+    );
+    final closeSquerPaint = closeSquareBrush.toPaint(
       context.estimatedBounds,
       textDirection: context.textDirection,
     );
@@ -51,14 +61,59 @@ class PrettyQrRoundedSymbol extends PrettyQrShape {
         ..close();
 
       if (PrettyQrRenderExperiments.needsAvoidComplexPaths) {
-        context.canvas.drawPath(modulePath, paint);
+        context.canvas.drawPath(modulePath, pointPaint);
       } else {
-        path.addPath(modulePath, Offset.zero);
+        pointPath.addPath(modulePath, Offset.zero);
       }
     }
 
-    path.close();
-    context.canvas.drawPath(path, paint);
+    final sss = context.matrix.first.resolveRect(context);
+
+    final pointSize = (sss.right) * 7;
+
+    final qrSize = context.estimatedBounds.right;
+
+    final topLeftSquer = Rect.fromLTRB(0, 0, pointSize, pointSize);
+    final topRightSquer =
+        Rect.fromLTWH(qrSize - pointSize, 0, pointSize, pointSize);
+    final bottomLeftSquer =
+        Rect.fromLTWH(0, qrSize - pointSize, pointSize, pointSize);
+
+    closeSquerePath.addRect(topLeftSquer);
+    closeSquerePath.addRect(topRightSquer);
+    closeSquerePath.addRect(bottomLeftSquer);
+
+    squarePath.addRRect(
+        RRect.fromRectAndRadius(topLeftSquer, const Radius.circular(12)));
+    squarePath.addRRect(
+        RRect.fromRectAndRadius(topRightSquer, const Radius.circular(12)));
+    squarePath.addRRect(
+        RRect.fromRectAndRadius(bottomLeftSquer, const Radius.circular(12)));
+
+    squareWhitePath.addRRect(RRect.fromRectAndRadius(
+        topLeftSquer.deflate(7), const Radius.circular(8)));
+    squareWhitePath.addRRect(RRect.fromRectAndRadius(
+        topRightSquer.deflate(7), const Radius.circular(8)));
+    squareWhitePath.addRRect(RRect.fromRectAndRadius(
+        bottomLeftSquer.deflate(7), const Radius.circular(8)));
+
+    innerSquarePath.addRRect(RRect.fromRectAndRadius(
+        topLeftSquer.deflate(12), const Radius.circular(6)));
+    innerSquarePath.addRRect(RRect.fromRectAndRadius(
+        topRightSquer.deflate(12), const Radius.circular(6)));
+    innerSquarePath.addRRect(RRect.fromRectAndRadius(
+        bottomLeftSquer.deflate(12), const Radius.circular(6)));
+
+    pointPath.close();
+    closeSquerePath.close();
+    squarePath.close();
+    squareWhitePath.close();
+
+    context.canvas.drawPath(pointPath, pointPaint);
+    context.canvas.drawPath(closeSquerePath, closeSquerPaint);
+    context.canvas.drawPath(squarePath, pointPaint);
+    context.canvas.drawPath(squareWhitePath, closeSquerPaint);
+    context.canvas.drawPath(innerSquarePath, pointPaint);
   }
 
   @override
