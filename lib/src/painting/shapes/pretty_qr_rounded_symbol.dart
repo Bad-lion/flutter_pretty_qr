@@ -18,6 +18,15 @@ class PrettyQrRoundedSymbol extends PrettyQrShape {
   @nonVirtual
   final BorderRadiusGeometry borderRadius;
 
+  @nonVirtual
+  final double outSquareRadius;
+  @nonVirtual
+  final double innerSquareRadius;
+  @nonVirtual
+  final double whiteSquareDeflate;
+  @nonVirtual
+  final double blackSquareDeflate;
+
   /// The default value for [borderRadius].
   static const kDefaultBorderRadius = BorderRadius.all(
     Radius.circular(8),
@@ -28,6 +37,10 @@ class PrettyQrRoundedSymbol extends PrettyQrShape {
   const PrettyQrRoundedSymbol({
     this.color = const Color(0xFF000000),
     this.borderRadius = kDefaultBorderRadius,
+    this.outSquareRadius = 12,
+    this.whiteSquareDeflate = 7,
+    this.innerSquareRadius = 6,
+    this.blackSquareDeflate = 12,
   });
 
   @override
@@ -83,31 +96,38 @@ class PrettyQrRoundedSymbol extends PrettyQrShape {
     closeSquerePath.addRect(topRightSquer);
     closeSquerePath.addRect(bottomLeftSquer);
 
-    squarePath.addRRect(
-        RRect.fromRectAndRadius(topLeftSquer, const Radius.circular(12)));
-    squarePath.addRRect(
-        RRect.fromRectAndRadius(topRightSquer, const Radius.circular(12)));
-    squarePath.addRRect(
-        RRect.fromRectAndRadius(bottomLeftSquer, const Radius.circular(12)));
+    squarePath.addRRect(RRect.fromRectAndRadius(
+        topLeftSquer, Radius.circular(outSquareRadius)));
+    squarePath.addRRect(RRect.fromRectAndRadius(
+        topRightSquer, Radius.circular(outSquareRadius)));
+    squarePath.addRRect(RRect.fromRectAndRadius(
+        bottomLeftSquer, Radius.circular(outSquareRadius)));
 
     squareWhitePath.addRRect(RRect.fromRectAndRadius(
-        topLeftSquer.deflate(7), const Radius.circular(8)));
+        topLeftSquer.deflate(whiteSquareDeflate),
+        Radius.circular(whiteSquareDeflate)));
     squareWhitePath.addRRect(RRect.fromRectAndRadius(
-        topRightSquer.deflate(7), const Radius.circular(8)));
+        topRightSquer.deflate(whiteSquareDeflate),
+        Radius.circular(whiteSquareDeflate)));
     squareWhitePath.addRRect(RRect.fromRectAndRadius(
-        bottomLeftSquer.deflate(7), const Radius.circular(8)));
+        bottomLeftSquer.deflate(whiteSquareDeflate),
+        Radius.circular(whiteSquareDeflate)));
 
     innerSquarePath.addRRect(RRect.fromRectAndRadius(
-        topLeftSquer.deflate(12), const Radius.circular(6)));
+        topLeftSquer.deflate(blackSquareDeflate),
+        Radius.circular(innerSquareRadius)));
     innerSquarePath.addRRect(RRect.fromRectAndRadius(
-        topRightSquer.deflate(12), const Radius.circular(6)));
+        topRightSquer.deflate(blackSquareDeflate),
+        Radius.circular(innerSquareRadius)));
     innerSquarePath.addRRect(RRect.fromRectAndRadius(
-        bottomLeftSquer.deflate(12), const Radius.circular(6)));
+        bottomLeftSquer.deflate(blackSquareDeflate),
+        Radius.circular(innerSquareRadius)));
 
     pointPath.close();
     closeSquerePath.close();
     squarePath.close();
     squareWhitePath.close();
+    innerSquarePath.close();
 
     context.canvas.drawPath(pointPath, pointPaint);
     context.canvas.drawPath(closeSquerePath, closeSquerPaint);
