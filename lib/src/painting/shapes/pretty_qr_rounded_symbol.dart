@@ -26,6 +26,8 @@ class PrettyQrRoundedSymbol extends PrettyQrShape {
   final double whiteSquareDeflate;
   @nonVirtual
   final double blackSquareDeflate;
+  @nonVirtual
+  final double whiteSquareRadius;
 
   /// The default value for [borderRadius].
   static const kDefaultBorderRadius = BorderRadius.all(
@@ -39,6 +41,7 @@ class PrettyQrRoundedSymbol extends PrettyQrShape {
     this.borderRadius = kDefaultBorderRadius,
     this.outSquareRadius = 12,
     this.whiteSquareDeflate = 7,
+    this.whiteSquareRadius = 8,
     this.innerSquareRadius = 6,
     this.blackSquareDeflate = 12,
   });
@@ -105,13 +108,13 @@ class PrettyQrRoundedSymbol extends PrettyQrShape {
 
     squareWhitePath.addRRect(RRect.fromRectAndRadius(
         topLeftSquer.deflate(whiteSquareDeflate),
-        Radius.circular(whiteSquareDeflate)));
+        Radius.circular(whiteSquareRadius)));
     squareWhitePath.addRRect(RRect.fromRectAndRadius(
         topRightSquer.deflate(whiteSquareDeflate),
-        Radius.circular(whiteSquareDeflate)));
+        Radius.circular(whiteSquareRadius)));
     squareWhitePath.addRRect(RRect.fromRectAndRadius(
         bottomLeftSquer.deflate(whiteSquareDeflate),
-        Radius.circular(whiteSquareDeflate)));
+        Radius.circular(whiteSquareRadius)));
 
     innerSquarePath.addRRect(RRect.fromRectAndRadius(
         topLeftSquer.deflate(blackSquareDeflate),
